@@ -1,4 +1,21 @@
-html {
-  height: 100%;
-  width: 100%;
+/* ... seu css antigo ... */
+
+#destaque-jogo {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.jogo-placar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
+  margin-top: 10px;
+}
+
+.jogo-placar span {
+  margin: 0 15px;
 }

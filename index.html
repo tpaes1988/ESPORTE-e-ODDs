@@ -1,16 +1,34 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Análises Esportivas</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  Hello world
+  <h1>Central de Análises Esportivas</h1>
+
+  <div id="status-api" style="padding: 10px; background-color: #ffc; border: 1px solid #e2e2a2; margin-bottom: 20px;">
+    <!-- MUDANÇA NA MENSAGEM INICIAL -->
+    <p>Testando API secundária (TheSportsDB)...</p>
+  </div>
+
+  <!-- O resto do site fica aqui, sem alterações -->
+  <section id="destaque-jogo">
+    <h2>🏆 Jogo em Destaque 🏆</h2>
+    <div id="info-destaque"><p>Aguardando...</p></div>
+  </section>
+  <hr>
+  <label for="seletor-liga">Ver resultados de outras ligas:</label>
+  <select id="seletor-liga">
+    <option value="71">Brasileirão Série A</option>
+    <option value="39">Premier League (Inglaterra)</option>
+    <option value="140">La Liga (Espanha)</option>
+  </select>
+  <div id="dados"><p>Escolha uma liga para ver os resultados.</p></div>
+
+  <script src="config.js"></script> 
   <script src="script.js"></script>
 </body>
-
 </html>
