@@ -1,0 +1,16 @@
+# Arquivo: netlify.toml
+# Configuração de build para a Netlify
+
+[build]
+  # Diretório que será publicado. Como seu index.html está na raiz, usamos "."
+  publish = "."
+
+  # Diretório onde as funções serverless estão.
+  # ESTA É A LINHA MAIS IMPORTANTE!
+  functions = "netlify/functions"
+
+# Redirecionamento opcional, mas uma boa prática para funções
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
