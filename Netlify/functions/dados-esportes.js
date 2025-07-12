@@ -1,6 +1,3 @@
-// Arquivo: /netlify/functions/dados-esportes.js
-// VERSÃO MELHORADA PARA DIAGNÓSTICO
-
 exports.handler = async function(event, context) {
     console.log("INFO: Função 'dados-esportes' iniciada.");
 
@@ -11,8 +8,8 @@ exports.handler = async function(event, context) {
         return { statusCode: 500, body: JSON.stringify({ error: "Chave de API não configurada no servidor." }) };
     }
 
-    // Vamos usar o endpoint /status, que é mais simples para testar a chave.
-    const url = 'https://v3.football.api-sports.io/status';
+    // Removido o espaço no final do URL
+    const url = 'https://v3.football.api-sports.io/status ';
 
     const options = {
         method: 'GET',
@@ -28,7 +25,7 @@ exports.handler = async function(event, context) {
 
         const data = await response.json();
 
-        // Se a API retornou um erro (ex: chave inválida), os detalhes estarão em 'data.errors'
+        // Verificamos se a resposta contém erros
         if (!response.ok || (data.errors && Object.keys(data.errors).length > 0)) {
             console.error("ERRO: A API de Esportes retornou uma mensagem de erro:", JSON.stringify(data.errors));
             throw new Error('A API retornou um erro. Verifique a chave ou sua assinatura.');
