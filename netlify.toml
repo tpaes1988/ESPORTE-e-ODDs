@@ -6,7 +6,7 @@
   # === ESTA É A LINHA MAIS IMPORTANTE ===
   # Mude "public" para o nome da pasta onde seu index.html está.
   # Se o seu index.html está na raiz do projeto, use "/"
-  publish = "public"
+  publish = "/" # <-- Mude esta linha para barra ("/")
 
 [functions]
   # Esta configuração parece correta, mantenha assim.
