@@ -1,13 +1,13 @@
 [build]
-  # Diretório que será publicado. Como seu index.html está na raiz, usamos "."
-  publish = "."
+  # Se seu site é apenas HTML/CSS/JS simples, você pode apagar a linha "command".
+  # Se você usa alguma ferramenta como Vite/React, coloque seu comando aqui.
+  # command = "npm run build"
 
-  # Diretório onde as funções serverless estão.
-  # ESTA É A LINHA MAIS IMPORTANTE!
-  functions = "netlify/functions"
+  # === ESTA É A LINHA MAIS IMPORTANTE ===
+  # Mude "public" para o nome da pasta onde seu index.html está.
+  # Se o seu index.html está na raiz do projeto, use "/"
+  publish = "public"
 
-# Redirecionamento opcional, mas uma boa prática para funções
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+[functions]
+  # Esta configuração parece correta, mantenha assim.
+  directory = "netlify/functions"
