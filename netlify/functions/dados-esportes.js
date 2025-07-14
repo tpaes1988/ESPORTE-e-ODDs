@@ -1,13 +1,22 @@
 exports.handler = async (event, context) => {
   try {
-    // 1. Usa a nova variável de ambiente para a chave do TheSportsDB
     const API_KEY = process.env.THESPORTSDB_API_KEY;
 
+    // --- NOVO: Verificação crucial para a chave da API ---
+    if (!API_KEY) {
+      console.error("ERRO CRÍTICO: THESPORTSDB_API_KEY não está configurada nas variáveis de ambiente do Netlify.");
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Erro interno da função: Chave da API TheSportsDB não configurada no Netlify." }),
+        headers: { "Content-Type": "application/json" },
+      };
+    }
+    // --- FIM DA VERIFICAÇÃO ---
+
     // 2. Define o URL para o endpoint de "todas as ligas" do TheSportsDB
-    //    A chave de API vai diretamente na URL para este tipo de endpoint
     const url = `https://www.thesportsdb.com/api/v1/json/${API_KEY}/all_leagues.php`;
 
-    console.log("INFO: Chamando TheSportsDB com URL:", url); // Para debug nos logs do Netlify
+    console.log("INFO: Tentando chamar TheSportsDB com URL:", url); // Para debug nos logs do Netlify
 
     const response = await fetch(url);
 
@@ -17,7 +26,7 @@ exports.handler = async (event, context) => {
       console.error(`ERRO: Resposta da API TheSportsDB com status ${response.status}: ${errorText}`);
       return {
         statusCode: response.status,
-        body: JSON.stringify({ error: `Erro na API TheSportsDB: ${response.status} - ${errorText}` }),
+        body: JSON.stringify({ error: `Erro na API TheSportsDB (HTTP ${response.status}): ${errorText}` }),
         headers: { "Content-Type": "application/json" },
       };
     }
@@ -35,10 +44,11 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error("ERRO: Erro na execução da função Netlify (TheSportsDB):", error);
+    console.error("ERRO: Erro inesperado na execução da função Netlify (TheSportsDB):", error);
+    // Melhoria para garantir que a mensagem de erro sempre seja útil
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Erro interno da função: ' + error.message }),
+      body: JSON.stringify({ error: 'Erro interno da função: ' + (error.message || error.toString() || 'Erro desconhecido.') }),
       headers: { "Content-Type": "application/json" },
     };
   }
