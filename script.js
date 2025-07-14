@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Função para testar a conexão com a API segura via Netlify Function
     async function testarConexaoAPISegura() {
-        divStatus.innerHTML = '🟡 Testando conexão com a API-Football...'; // Mensagem atualizada
+        divStatus.innerHTML = '🟡 Testando conexão com a API-Football...'; // Mensagem AGORA correta para API-Football
         divStatus.style.backgroundColor = '#fff3cd'; // Amarelo
         try {
             // URL da sua função Netlify (não muda)
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             console.log("Resposta recebida da nossa função segura (API-Football):", data);
 
-            // === VOLTA PARA A ESTRUTURA DA API-FOOTBALL ===
+            // === LÓGICA CORRETA PARA A ESTRUTURA DA API-FOOTBALL ===
             // A API-Football retorna 'response.active' e 'response.plan' no endpoint de status
             if (data && data.response && data.response.active) {
                 const plan = data.response.plan;
@@ -33,8 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Se a estrutura não for a esperada ou o 'response.active' não for true
                 console.error("Dados da API-Football inesperados ou 'response.active' não é true. Resposta:", data);
                 // Verifica se há erros específicos da API-Football na resposta
-                if (data && data.errors && data.errors.length > 0) {
-                    throw new Error(`Erro da API-Football: ${data.errors.join(', ')}`);
+                if (data && data.errors && Object.keys(data.errors).length > 0) { // Alterado para Object.keys
+                    const errorKeys = Object.keys(data.errors);
+                    const firstError = data.errors[errorKeys[0]]; // Pega a mensagem do primeiro erro
+                    throw new Error(`Erro da API-Football: ${firstError}`);
                 } else {
                     throw new Error('A resposta da API-Football indica um problema ou os dados estão vazios/inválidos.');
                 }

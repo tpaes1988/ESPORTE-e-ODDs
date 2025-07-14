@@ -1,13 +1,3 @@
 [build]
-  # Se seu site é apenas HTML/CSS/JS simples, você pode apagar a linha "command".
-  # Se você usa alguma ferramenta como Vite/React, coloque seu comando aqui.
-  # command = "npm run build"
-
-  # === ESTA É A LINHA MAIS IMPORTANTE ===
-  # Mude "public" para o nome da pasta onde seu index.html está.
-  # Se o seu index.html está na raiz do projeto, use "/"
-  publish = "/" # <-- Mude esta linha para barra ("/")
-
-[functions]
-  # Esta configuração parece correta, mantenha assim.
-  directory = "netlify/functions"
+  publish = "." # Ou "public", se seus arquivos HTML/CSS/JS estão numa pasta "public"
+  functions = "netlify/functions"

@@ -1,9 +1,8 @@
 exports.handler = async (event, context) => {
   try {
-    // A variável de ambiente agora é API_FOOTBALL_KEY
-    const API_KEY = process.env.API_FOOTBALL_KEY;
+    const API_KEY = process.env.API_FOOTBALL_KEY; // A variável de ambiente agora é API_FOOTBALL_KEY
 
-    // --- NOVO/REVIDO: Verificação crucial para a chave da API-Football ---
+    // --- Verificação crucial para a chave da API-Football ---
     if (!API_KEY) {
       console.error("ERRO CRÍTICO: API_FOOTBALL_KEY não está configurada nas variáveis de ambiente do Netlify.");
       return {
@@ -12,7 +11,7 @@ exports.handler = async (event, context) => {
         headers: { "Content-Type": "application/json" },
       };
     }
-    // --- FIM DA VERIFICAÇÃO ---
+    // --- Fim da verificação ---
 
     // URL para o endpoint de status da API-Football (o mesmo de antes)
     const url = 'https://v3.football.api-sports.io/status';
@@ -30,7 +29,7 @@ exports.handler = async (event, context) => {
       console.error(`ERRO: Resposta da API-Football com status ${response.status}: ${errorText}`);
       return {
         statusCode: response.status,
-        body: JSON.stringify({ error: `Erro na API-Football (HTTP ${response.status}): ${errorText}` }),
+        body: JSON.stringify({ error: `Erro da API-Football (HTTP ${response.status}): ${errorText}` }),
         headers: { "Content-Type": "application/json" },
       };
     }
