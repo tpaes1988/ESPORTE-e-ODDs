@@ -1,16 +1,14 @@
 
+
 document.addEventListener("DOMContentLoaded", () => {
-  // --- 1. PEGA AS REFERÊNCIAS DOS ELEMENTOS HTML ---
+  // --- 1. REFERÊNCIAS DOS ELEMENTOS HTML ---
   const divStatus = document.getElementById("status-api");
   const jogosDestaqueContainer = document.getElementById("jogos-destaque");
-  
-  // Elementos do Modal
   const modal = document.getElementById("modal-apostas");
   const spanFechar = document.querySelector(".fechar-modal");
   const listaCasasAposta = document.getElementById("lista-casas-aposta");
 
-
-  // --- 2. FUNÇÃO PRINCIPAL PARA CARREGAR OS JOGOS ---
+  // --- 2. FUNÇÃO PARA CARREGAR OS JOGOS ---
   async function carregarJogosDoDia() {
     divStatus.textContent = "🟡 Carregando jogos do dia...";
     divStatus.style.backgroundColor = "#fff3cd";
@@ -36,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       divStatus.textContent = "✅ Jogos carregados com sucesso!";
       divStatus.style.backgroundColor = "#d4edda";
       
-      jogosDestaqueContainer.innerHTML = '<h2>Jogos de Hoje</h2>'; // Limpa e adiciona o título
+      jogosDestaqueContainer.innerHTML = '<h2>Jogos de Hoje</h2>'; 
       partidas.forEach(jogo => {
         const casa = jogo.teams.home.name;
         const fora = jogo.teams.away.name;
@@ -45,21 +43,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const jogoEl = document.createElement("div");
         jogoEl.className = "jogo-card";
-jogoEl.innerHTML = `
-  <span class="time-casa">
-    <img src="${jogo.teams.home.logo}" alt="Escudo do ${casa}" class="escudo-time">
-    <span>${casa}</span>
-  </span>
-
-  <span class="placar">${golsCasa} x ${golsFora}</span>
-  
-  <span class="time-fora">
-    <span>${fora}</span>
-    <img src="${jogo.teams.away.logo}" alt="Escudo do ${fora}" class="escudo-time">
-  </span>
-
-  <button class="btn-apostar" data-fixture-id="${jogo.fixture.id}">Onde Apostar?</button>
-`;
+        
+        // CÓDIGO ATUALIZADO COM OS ESCUDOS
+        jogoEl.innerHTML = `
+          <span class="time-casa">
+            <img src="${jogo.teams.home.logo}" alt="Escudo do ${casa}" class="escudo-time">
+            <span>${casa}</span>
+          </span>
+          <span class="placar">${golsCasa} x ${golsFora}</span>
+          <span class="time-fora">
+            <span>${fora}</span>
+            <img src="${jogo.teams.away.logo}" alt="Escudo do ${fora}" class="escudo-time">
+          </span>
+          <button class="btn-apostar" data-fixture-id="${jogo.fixture.id}">Onde Apostar?</button>
         `;
         jogosDestaqueContainer.appendChild(jogoEl);
       });
@@ -71,15 +67,13 @@ jogoEl.innerHTML = `
     }
   }
 
-
   // --- 3. LÓGICA DO MODAL (ABRIR E FECHAR) ---
   jogosDestaqueContainer.addEventListener("click", (event) => {
       if (event.target.matches(".btn-apostar")) {
-        // Seus links de afiliado
         const linksAfiliados = [
-          { nome: "Bet365", url: "#" }, // Substitua "#" pelo seu link real
-          { nome: "Betano", url: "#" }, // Substitua "#" pelo seu link real
-          { nome: "Outra Casa", url: "#" } // Substitua "#" pelo seu link real
+          { nome: "Bet365", url: "#" },
+          { nome: "Betano", url: "#" },
+          { nome: "Outra Casa", url: "#" }
         ];
 
         listaCasasAposta.innerHTML = "";
@@ -105,8 +99,7 @@ jogoEl.innerHTML = `
       }
     }
 
-
-  // --- 4. INICIA TUDO (A DEIXA FINAL QUE ESTAVA FALTANDO!) ---
+  // --- 4. INICIA TUDO ---
   carregarJogosDoDia();
 
 });
