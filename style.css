@@ -1,26 +1,53 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f2f5;
-  margin: 0;
-  padding: 0;
-}
+/* style.css */
 
-header {
-  background-color: #202c45;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-footer {
-  text-align: center;
+/* Adicione este novo estilo para os cards de jogo */
+.jogo-card {
+  display: flex; /* Alinha os itens lado a lado */
+  justify-content: space-between; /* Espaça os itens (time, placar, time) */
+  align-items: center; /* Centraliza verticalmente */
+  background-color: white;
   padding: 16px;
-  background-color: #eaeaea;
-  font-size: 14px;
+  margin: 12px auto; /* Espaçamento entre os cards */
+  max-width: 600px; /* Largura máxima do card */
+  border-radius: 8px; /* Bordas arredondadas */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave para dar profundidade */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600; /* Deixa a fonte um pouco mais forte */
 }
 
-#status-api {
-  font-weight: bold;
-  margin: 16px auto;
-  max-width: 600px;
-  padding: 10px 14
+.time-casa, .time-fora {
+  flex: 1; /* Faz os times ocuparem o espaço disponível */
+}
+
+.time-fora {
+  text-align: right; /* Alinha o time visitante à direita */
+}
+
+.placar {
+  margin: 0 16px; /* Espaçamento para o placar no centro */
+  font-size: 1.2em;
+  color: #202c45;
+}
+/* style.css */
+
+.btn-odds {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer; /* Muda o mouse para uma "mãozinha" */
+  margin-left: 20px;
+}
+
+.btn-odds:hover {
+  background-color: #0056b3; /* Cor mais escura ao passar o mouse */
+}
+
+.odds-container {
+  /* Estilo para a área que mostrará as odds */
+  flex-basis: 100%; /* Faz a área de odds ocupar a linha inteira abaixo */
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
