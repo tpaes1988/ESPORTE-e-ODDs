@@ -45,11 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const jogoEl = document.createElement("div");
         jogoEl.className = "jogo-card";
-        jogoEl.innerHTML = `
-          <span class="time-casa">${casa}</span>
-          <span class="placar">${golsCasa} x ${golsFora}</span>
-          <span class="time-fora">${fora}</span>
-          <button class="btn-apostar" data-fixture-id="${jogo.fixture.id}">Onde Apostar?</button>
+jogoEl.innerHTML = `
+  <span class="time-casa">
+    <img src="${jogo.teams.home.logo}" alt="Escudo do ${casa}" class="escudo-time">
+    <span>${casa}</span>
+  </span>
+
+  <span class="placar">${golsCasa} x ${golsFora}</span>
+  
+  <span class="time-fora">
+    <span>${fora}</span>
+    <img src="${jogo.teams.away.logo}" alt="Escudo do ${fora}" class="escudo-time">
+  </span>
+
+  <button class="btn-apostar" data-fixture-id="${jogo.fixture.id}">Onde Apostar?</button>
+`;
         `;
         jogosDestaqueContainer.appendChild(jogoEl);
       });

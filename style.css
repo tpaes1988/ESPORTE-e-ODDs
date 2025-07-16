@@ -95,3 +95,42 @@
   font-weight: bold;
   cursor: pointer;
 }
+
+/* Estilo para os links de afiliado dentro do modal */
+.link-aposta {
+  display: block; /* Faz cada link ocupar uma linha inteira */
+  background-color: #28a745; /* Um verde chamativo */
+  color: white;
+  padding: 12px;
+  margin-bottom: 10px; /* Espaçamento entre os botões */
+  text-decoration: none; /* Remove o sublinhado do link */
+  text-align: center;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.link-aposta:hover {
+  background-color: #218838; /* Cor mais escura ao passar o mouse */
+}
+/* style.css */
+
+/* Estilo para os escudos dos times */
+.escudo-time {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle; /* Ajuda a alinhar com o texto */
+}
+
+/* Ajustes finos nos containers dos times para alinhar o escudo com o nome */
+.time-casa {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Cria um espaço de 8px entre o escudo e o nome */
+}
+
+.time-fora {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Garante que o time visitante fique na direita */
+  gap: 8px; /* Cria um espaço de 8px entre o nome e o escudo */
+}
