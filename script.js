@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const hoje = new Date().toISOString().split("T")[0];
-      const url = `/.netlify/functions/dados-esportes?endpoint=fixtures&date=${hoje}`;
+      const url = `/api/dados-esportes?endpoint=fixtures&date=${hoje}`;
 
       const res = await fetch(url);
       if (!res.ok) {
