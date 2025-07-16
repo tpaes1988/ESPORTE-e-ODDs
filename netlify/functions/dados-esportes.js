@@ -1,57 +1,32 @@
-exports.handler = async (event, context) => {
+const fetch = require("node-fetch");
+
+exports.handler = async function(event, context) {
+  const { endpoint = "fixtures", date } = event.queryStringParameters || {};
+
+  let query = "";
+  if (date) {
+    query = `?date=${date}`;
+  }
+
+  const url = `https://v3.football.api-sports.io/${endpoint}${query}`;
+
   try {
-    const API_KEY = process.env.API_FOOTBALL_KEY; // A variável de ambiente agora é API_FOOTBALL_KEY
-
-    // --- Verificação crucial para a chave da API-Football ---
-    if (!API_KEY) {
-      console.error("ERRO CRÍTICO: API_FOOTBALL_KEY não está configurada nas variáveis de ambiente do Netlify.");
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Erro interno da função: Chave da API-Football não configurada no Netlify." }),
-        headers: { "Content-Type": "application/json" },
-      };
-    }
-    // --- Fim da verificação ---
-
-    // URL para o endpoint de status da API-Football (o mesmo de antes)
-    const url = 'https://v3.football.api-sports.io/status';
-
-    console.log("INFO: Chamando API-Football com URL:", url);
-
-    const response = await fetch(url, {
+    const res = await fetch(url, {
       headers: {
-        'x-apisports-key': API_KEY, // Para API-Football, a chave vai no cabeçalho
-      },
+        "x-apisports-key": process.env.API_FOOTBALL_KEY
+      }
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`ERRO: Resposta da API-Football com status ${response.status}: ${errorText}`);
-      return {
-        statusCode: response.status,
-        body: JSON.stringify({ error: `Erro da API-Football (HTTP ${response.status}): ${errorText}` }),
-        headers: { "Content-Type": "application/json" },
-      };
-    }
-
-    const data = await response.json();
-
-    // Log para ver a resposta completa da API-Football
-    console.log("SUCESSO: Dados completos recebidos da API-Football e sendo retornados pela função:", JSON.stringify(data, null, 2));
+    const data = await res.json();
 
     return {
-      statusCode: 200,
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      statusCode: res.status,
+      body: JSON.stringify(data)
     };
-  } catch (error) {
-    console.error("ERRO: Erro inesperado na execução da função Netlify (API-Football):", error);
+  } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Erro interno da função: ' + (error.message || error.toString() || 'Erro desconhecido.') }),
-      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: err.message })
     };
   }
 };

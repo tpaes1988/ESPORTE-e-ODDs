@@ -1,3 +1,2 @@
 [build]
-  publish = "." # Isso indica que seus arquivos HTML/CSS/JS estão na raiz do repositório
-  functions = "netlify/functions" # Isso aponta para sua pasta de funções
+  functions = "functions"
