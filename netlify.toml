@@ -1,2 +1,13 @@
+# Arquivo: netlify.toml
+# Configuração COMPLETA de build para a Netlify
+
 [build]
-functions = "netlify/functions"
+  # Diretório onde as funções serverless estão.
+  functions = "netlify/functions"
+
+# ATALHO: Redireciona qualquer chamada para /api/... 
+# para a função correspondente. ESTA PARTE ESTAVA FALTANDO.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
