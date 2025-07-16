@@ -1,56 +1,66 @@
-document.addEventListener('DOMContentLoaded', function() {
- const divStatus = document.getElementById('status-api'); // Corrigido para corresponder ao HTML
+document.addEventListener("DOMContentLoaded", () => {
+  const divStatus = document.getElementById("status-api");
+  const jogosDestaqueContainer = document.getElementById("jogos-destaque");
 
-    const dropdownLigas = document.getElementById('dropdown-ligas');
-    const jogosDestaqueContainer = document.getElementById('jogos-destaque');
+  // Carrega os jogos do dia ao iniciar
+  carregarJogosDoDia();
 
-    // Função para testar a conexão com a API segura via Netlify Function
-    async function testarConexaoAPISegura() {
-        divStatus.innerHTML = '🟡 Testando conexão com a API-Football...'; // Mensagem AGORA correta para API-Football
-        divStatus.style.backgroundColor = '#fff3cd'; // Amarelo
-        try {
-            // URL da sua função Netlify (não muda)
-            const urlFuncaoSegura = '/.netlify/functions/dados-esportes';
-            console.log("Chamando função Netlify em:", urlFuncaoSegura);
+  async function carregarJogosDoDia() {
+    divStatus.textContent = "🟡 Carregando jogos do dia...";
+    divStatus.style.backgroundColor = "#fff3cd"; // amarelo claro
 
-            const response = await fetch(urlFuncaoSegura);
+    try {
+      // Ajuste aqui a data fixa ou dinâmica: YYYY-MM-DD
+      const hoje = new Date().toISOString().split("T")[0];
+      const url = `/.netlify/functions/dados-esportes?endpoint=fixtures&date=${hoje}`;
 
-            // Verificar se a resposta da função Netlify foi OK antes de tentar parsear
-            if (!response.ok) {
-                const errorBody = await response.text();
-                throw new Error(`Erro da função Netlify (status: ${response.status}): ${errorBody}`);
-            }
+      console.log("Buscando fixtures em:", url);
+      const res = await fetch(url);
 
-            const data = await response.json();
-            console.log("Resposta recebida da nossa função segura (API-Football):", data);
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`Status ${res.status}: ${body}`);
+      }
 
-            // === LÓGICA CORRETA PARA A ESTRUTURA DA API-FOOTBALL ===
-            // A API-Football retorna 'response.active' e 'response.plan' no endpoint de status
-            if (data && data.response && data.response.active) {
-                const plan = data.response.plan;
-                divStatus.innerHTML = `✅ **SUCESSO!** Conexão segura com a API-Football funciona! Plano: ${plan}.`;
-                divStatus.style.backgroundColor = '#d4edda'; // Verde
-            } else {
-                // Se a estrutura não for a esperada ou o 'response.active' não for true
-                console.error("Dados da API-Football inesperados ou 'response.active' não é true. Resposta:", data);
-                // Verifica se há erros específicos da API-Football na resposta
-                if (data && data.errors && Object.keys(data.errors).length > 0) { // Alterado para Object.keys
-                    const errorKeys = Object.keys(data.errors);
-                    const firstError = data.errors[errorKeys[0]]; // Pega a mensagem do primeiro erro
-                    throw new Error(`Erro da API-Football: ${firstError}`);
-                } else {
-                    throw new Error('A resposta da API-Football indica um problema ou os dados estão vazios/inválidos.');
-                }
-            }
-        } catch (error) {
-            console.error("FALHA na chamada para a função segura (frontend):", error);
-            divStatus.innerHTML = `❌ **FALHA!** Não foi possível conectar com a API-Football. Verifique o código da função ou o log no Netlify. Detalhes: ${error.message}`;
-            divStatus.style.backgroundColor = '#f8d7da'; // Vermelho
-        }
+      const data = await res.json();
+      console.log("Resposta da Netlify Function:", data);
+
+      // Garante que encontre um array de partidas em data.response
+      const partidas = Array.isArray(data.response) ? data.response : [];
+
+      if (partidas.length === 0) {
+        divStatus.textContent = "⚠️ Nenhum jogo encontrado para hoje.";
+        divStatus.style.backgroundColor = "#fff3cd";
+        jogosDestaqueContainer.innerHTML = "";
+        return;
+      }
+
+      // Exibe sucesso
+      divStatus.textContent = "✅ Jogos carregados com sucesso!";
+      divStatus.style.backgroundColor = "#d4edda"; // verde claro
+
+      // Monta a lista de jogos
+      jogosDestaqueContainer.innerHTML = ""; 
+      partidas.forEach(jogo => {
+        const casa = jogo.teams.home.name;
+        const fora = jogo.teams.away.name;
+        const golsCasa = jogo.goals.home ?? 0;
+        const golsFora = jogo.goals.away ?? 0;
+
+        const jogoEl = document.createElement("div");
+        jogoEl.className = "jogo";
+        jogoEl.innerHTML = `
+          <span class="time-casa">${casa}</span>
+          <span class="placar">${golsCasa} x ${golsFora}</span>
+          <span class="time-fora">${fora}</span>
+        `;
+        jogosDestaqueContainer.appendChild(jogoEl);
+      });
+
+    } catch (error) {
+      console.error("Erro ao buscar jogos:", error);
+      divStatus.textContent = `❌ Falha ao carregar jogos: ${error.message}`;
+      divStatus.style.backgroundColor = "#f8d7da"; // vermelho claro
     }
-
-    // Chama a função ao carregar a página
-    testarConexaoAPISegura();
-
-    // ... (restante do código para o dropdown e jogos em destaque, se houver)
+  }
 });
