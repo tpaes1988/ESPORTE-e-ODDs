@@ -47,13 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const jogoEl = document.createElement("div");
         jogoEl.className = "jogo-card";
-        jogoEl.innerHTML = `
-          <span class="time-casa">${casa}</span>
-          <span class="placar">${golsCasa} x ${golsFora}</span>
-          <span class="time-fora">${fora}</span>
-          <button class="btn-odds" data-fixture-id="${jogo.fixture.id}">Ver Odds</button>
-          <div class="odds-container" style="display: none;"></div> 
-        `;
+<button class="btn-apostar" data-fixture-id="${jogo.fixture.id}">Onde Apostar?</button>
         jogosDestaqueContainer.appendChild(jogoEl);
       });
 
@@ -63,66 +57,44 @@ document.addEventListener("DOMContentLoaded", () => {
       divStatus.style.backgroundColor = "#f8d7da";
     }
   }
-  // --- FIM DA FUNÇÃO carregarJogosDoDia ---
+// script.js
 
+// --- Pega as referências dos elementos do Modal ---
+const modal = document.getElementById("modal-apostas");
+const spanFechar = document.querySelector(".fechar-modal");
+const listaCasasAposta = document.getElementById("lista-casas-aposta");
 
-  // --- 4. OUVINTE DE EVENTOS PRINCIPAL (O "CÉREBRO") ---
-  jogosDestaqueContainer.addEventListener("click", async (event) => {
-    logToPage("INFO: Clique detectado no container de jogos!");
+// --- Lógica para ABRIR o modal ---
+jogosDestaqueContainer.addEventListener("click", (event) => {
+  if (event.target.matches(".btn-apostar")) {
+    // Seus links de afiliado
+    const linksAfiliados = [
+      { nome: "Bet365", url: "SEU_LINK_DE_AFILIADO_DA_BET365" },
+      { nome: "Betano", url: "SEU_LINK_DE_AFILIADO_DA_BETANO" },
+      { nome: "Outra Casa", url: "SEU_LINK_DE_AFILIADO_DE_OUTRA" }
+    ];
 
-    if (event.target.matches(".btn-odds")) {
-      logToPage("INFO: Botão 'Ver Odds' foi clicado!");
-      
-      const botao = event.target;
-      const fixtureId = botao.dataset.fixtureId;
-      logToPage(`INFO: ID da Partida encontrado: ${fixtureId}`);
+    // Limpa a lista anterior e preenche com os novos links
+    listaCasasAposta.innerHTML = "";
+    linksAfiliados.forEach(link => {
+      const linkEl = document.createElement("a");
+      linkEl.href = link.url;
+      linkEl.textContent = `Apostar na ${link.nome}`;
+      linkEl.target = "_blank"; // Abre em nova aba
+      linkEl.className = "link-aposta"; // Para estilizar depois
+      listaCasasAposta.appendChild(linkEl);
+    });
 
-      if (!fixtureId) {
-        logToPage("ERRO: Não foi possível encontrar o fixtureId no botão!");
-        return;
-      }
-
-      const cardDoJogo = botao.closest(".jogo-card");
-      const oddsContainer = cardDoJogo.querySelector(".odds-container");
-      logToPage("INFO: Container para as odds encontrado.");
-      
-      oddsContainer.style.display = "block";
-      oddsContainer.innerHTML = "Buscando odds...";
-      
-      try {
-        const url = `/api/dados-esportes?endpoint=odds&fixtureId=${fixtureId}`;
-        logToPage(`INFO: Fazendo chamada para a API em: ${url}`);
-
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.response && data.response.length > 0 && data.response[0].bookmakers.length > 0) {
-          const bookmaker = data.response[0].bookmakers[0];
-          const oddsVitoriaCasa = bookmaker.bets[0].values.find(v => v.value === "Home")?.odd || 'N/A';
-          const oddsEmpate = bookmaker.bets[0].values.find(v => v.value === "Draw")?.odd || 'N/A';
-          const oddsVitoriaFora = bookmaker.bets[0].values.find(v => v.value === "Away")?.odd || 'N/A';
-
-          oddsContainer.innerHTML = `
-            <strong>${bookmaker.name}:</strong> 
-            Casa: ${oddsVitoriaCasa} | 
-            Empate: ${oddsEmpate} | 
-            Fora: ${oddsVitoriaFora}
-          `;
-          logToPage("SUCESSO: Odds exibidas na página.");
-        } else {
-          oddsContainer.innerHTML = "Odds não disponíveis para este jogo.";
-          logToPage("AVISO: A API não retornou odds para este jogo.");
-        }
-      } catch (error) {
-        oddsContainer.innerHTML = "Erro ao buscar odds.";
-        logToPage(`ERRO DETALHADO: ${error.message}`);
-      }
-    }
-  });
-  // --- FIM DO OUVINTE DE EVENTOS ---
-
-  // --- 5. INICIA TUDO ---
-  carregarJogosDoDia();
-
+    modal.style.display = "block"; // Mostra o modal!
+  }
 });
-// --- FIM DO CÓDIGO ---
+
+// --- Lógica para FECHAR o modal ---
+spanFechar.onclick = () => {
+  modal.style.display = "none";
+}
+window.onclick = (event) => {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
