@@ -62,33 +62,40 @@ jogoEl.innerHTML = `
   }
 });   
 jogosDestaqueContainer.addEventListener("click", async (event) => {
-  // Verifica se o que foi clicado foi um botão com a classe 'btn-odds'
-  if (event.target.matches(".btn-odds")) {
-    const botao = event.target;
-    const fixtureId = botao.dataset.fixtureId; // Pega o ID que guardamos no botão!
-    
-    // Pega o card inteiro do jogo (o elemento 'pai' do botão)
-    const cardDoJogo = botao.closest(".jogo-card"); 
-    const oddsContainer = cardDoJogo.querySelector(".odds-container");
+  console.log("CLIQUE DETECTADO NO CONTAINER DE JOGOS!"); // Pista 1: O ouvinte está ativo?
 
-    // Mostra uma mensagem de "carregando"
+  if (event.target.matches(".btn-odds")) {
+    console.log("BOTÃO 'Ver Odds' FOI CLICADO!"); // Pista 2: Ele reconheceu o botão?
+    
+    const botao = event.target;
+    const fixtureId = botao.dataset.fixtureId;
+    console.log("ID da Partida (Fixture ID) encontrado:", fixtureId); // Pista 3: Ele achou o ID?
+
+    if (!fixtureId) {
+      console.error("ERRO GRAVE: Não foi possível encontrar o fixtureId no botão!");
+      return; // Para a execução se não houver ID
+    }
+
+    const cardDoJogo = botao.closest(".jogo-card");
+    const oddsContainer = cardDoJogo.querySelector(".odds-container");
+    console.log("Container para as odds encontrado:", oddsContainer); // Pista 4: Ele achou onde escrever?
+    
     oddsContainer.style.display = "block";
     oddsContainer.innerHTML = "Buscando odds...";
     
-    // Faz a chamada para a nossa função da Netlify
     try {
       const url = `/api/dados-esportes?endpoint=odds&fixtureId=${fixtureId}`;
+      console.log("Fazendo chamada para a API em:", url); // Pista 5: A URL está correta?
+
       const res = await fetch(url);
       const data = await res.json();
 
-      if (data.response && data.response.length > 0) {
-        // Pega as odds da primeira casa de aposta que a API retornar (ex: Bet365)
+      if (data.response && data.response.length > 0 && data.response[0].bookmakers.length > 0) {
         const bookmaker = data.response[0].bookmakers[0];
-        const oddsVitoriaCasa = bookmaker.bets[0].values[0].odd;
-        const oddsEmpate = bookmaker.bets[0].values[1].odd;
-        const oddsVitoriaFora = bookmaker.bets[0].values[2].odd;
+        const oddsVitoriaCasa = bookmaker.bets[0].values.find(v => v.value === "Home").odd;
+        const oddsEmpate = bookmaker.bets[0].values.find(v => v.value === "Draw").odd;
+        const oddsVitoriaFora = bookmaker.bets[0].values.find(v => v.value === "Away").odd;
 
-        // Exibe as odds formatadas
         oddsContainer.innerHTML = `
           <strong>${bookmaker.name}:</strong> 
           Casa: ${oddsVitoriaCasa} | 
@@ -100,7 +107,7 @@ jogosDestaqueContainer.addEventListener("click", async (event) => {
       }
     } catch (error) {
       oddsContainer.innerHTML = "Erro ao buscar odds.";
-      console.error("Erro ao buscar odds:", error);
+      console.error("Erro detalhado ao buscar odds:", error);
     }
   }
 });
