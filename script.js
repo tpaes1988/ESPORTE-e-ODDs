@@ -1,9 +1,18 @@
+
 document.addEventListener("DOMContentLoaded", () => {
+  // --- 1. PEGA AS REFERÊNCIAS DOS ELEMENTOS HTML ---
   const divStatus = document.getElementById("status-api");
   const jogosDestaqueContainer = document.getElementById("jogos-destaque");
+  const debugConsole = document.getElementById("debug-console");
 
-  carregarJogosDoDia();
+  // --- 2. FUNÇÃO PARA ESCREVER NO NOSSO PAINEL DE DIAGNÓSTICO ---
+  function logToPage(message) {
+    if (debugConsole) {
+      debugConsole.innerHTML += message + "\n";
+    }
+  }
 
+  // --- 3. FUNÇÃO PRINCIPAL PARA CARREGAR OS JOGOS ---
   async function carregarJogosDoDia() {
     divStatus.textContent = "🟡 Carregando jogos do dia...";
     divStatus.style.backgroundColor = "#fff3cd";
@@ -23,15 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (partidas.length === 0) {
         divStatus.textContent = "⚠️ Nenhum jogo encontrado para hoje.";
-        divStatus.style.backgroundColor = "#fff3cd";
-        jogosDestaqueContainer.innerHTML = "";
         return;
       }
 
       divStatus.textContent = "✅ Jogos carregados com sucesso!";
       divStatus.style.backgroundColor = "#d4edda";
-
-      jogosDestaqueContainer.innerHTML = "";
+      
+      jogosDestaqueContainer.innerHTML = '<h2>Jogos de Hoje</h2>'; // Limpa e adiciona o título
       partidas.forEach(jogo => {
         const casa = jogo.teams.home.name;
         const fora = jogo.teams.away.name;
@@ -39,18 +46,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const golsFora = jogo.goals.away ?? "-";
 
         const jogoEl = document.createElement("div");
-jogoEl.className = "jogo-card"; // <- MUDANÇA IMPORTANTE! Usando a nova classe.
-jogoEl.innerHTML = `
-  <span class="time-casa">${casa}</span>
-  <span class="placar">${golsCasa} x ${golsFora}</span>
-  <span class="time-fora">${fora}</span>
-  
-  <!-- O BOTÃO DE ODDS -->
-  <button class="btn-odds" data-fixture-id="${jogo.fixture.id}">Ver Odds</button>
-  
-  <!-- Um espaço reservado para exibir as odds depois -->
-  <div class="odds-container" style="display: none;"></div> 
-`;
+        jogoEl.className = "jogo-card";
+        jogoEl.innerHTML = `
+          <span class="time-casa">${casa}</span>
+          <span class="placar">${golsCasa} x ${golsFora}</span>
+          <span class="time-fora">${fora}</span>
+          <button class="btn-odds" data-fixture-id="${jogo.fixture.id}">Ver Odds</button>
+          <div class="odds-container" style="display: none;"></div> 
+        `;
         jogosDestaqueContainer.appendChild(jogoEl);
       });
 
@@ -60,66 +63,66 @@ jogoEl.innerHTML = `
       divStatus.style.backgroundColor = "#f8d7da";
     }
   }
-});   
-// script.js (Substituir o addEventListener pelo código abaixo)
+  // --- FIM DA FUNÇÃO carregarJogosDoDia ---
 
-// Pega a referência do nosso novo painel de diagnóstico
-const debugConsole = document.getElementById("debug-console");
 
-function logToPage(message) {
-  debugConsole.innerHTML += message + "\n"; // Adiciona a mensagem e uma nova linha
-}
+  // --- 4. OUVINTE DE EVENTOS PRINCIPAL (O "CÉREBRO") ---
+  jogosDestaqueContainer.addEventListener("click", async (event) => {
+    logToPage("INFO: Clique detectado no container de jogos!");
 
-// VERSÃO FINAL DE DIAGNÓSTICO (ESCREVE NA PÁGINA)
-jogosDestaqueContainer.addEventListener("click", async (event) => {
-  logToPage("INFO: Clique detectado no container de jogos!");
+    if (event.target.matches(".btn-odds")) {
+      logToPage("INFO: Botão 'Ver Odds' foi clicado!");
+      
+      const botao = event.target;
+      const fixtureId = botao.dataset.fixtureId;
+      logToPage(`INFO: ID da Partida encontrado: ${fixtureId}`);
 
-  if (event.target.matches(".btn-odds")) {
-    logToPage("INFO: Botão 'Ver Odds' foi clicado!");
-    
-    const botao = event.target;
-    const fixtureId = botao.dataset.fixtureId;
-    logToPage(`INFO: ID da Partida encontrado: ${fixtureId}`);
-
-    if (!fixtureId) {
-      logToPage("ERRO: Não foi possível encontrar o fixtureId no botão!");
-      return;
-    }
-
-    const cardDoJogo = botao.closest(".jogo-card");
-    const oddsContainer = cardDoJogo.querySelector(".odds-container");
-    logToPage("INFO: Container para as odds encontrado.");
-    
-    oddsContainer.style.display = "block";
-    oddsContainer.innerHTML = "Buscando odds...";
-    
-    try {
-      const url = `/api/dados-esportes?endpoint=odds&fixtureId=${fixtureId}`;
-      logToPage(`INFO: Fazendo chamada para a API em: ${url}`);
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (data.response && data.response.length > 0 && data.response[0].bookmakers.length > 0) {
-        const bookmaker = data.response[0].bookmakers[0];
-        const oddsVitoriaCasa = bookmaker.bets[0].values.find(v => v.value === "Home")?.odd || 'N/A';
-        const oddsEmpate = bookmaker.bets[0].values.find(v => v.value === "Draw")?.odd || 'N/A';
-        const oddsVitoriaFora = bookmaker.bets[0].values.find(v => v.value === "Away")?.odd || 'N/A';
-
-        oddsContainer.innerHTML = `
-          <strong>${bookmaker.name}:</strong> 
-          Casa: ${oddsVitoriaCasa} | 
-          Empate: ${oddsEmpate} | 
-          Fora: ${oddsVitoriaFora}
-        `;
-        logToPage("SUCESSO: Odds exibidas na página.");
-      } else {
-        oddsContainer.innerHTML = "Odds não disponíveis para este jogo.";
-        logToPage("AVISO: A API não retornou odds para este jogo.");
+      if (!fixtureId) {
+        logToPage("ERRO: Não foi possível encontrar o fixtureId no botão!");
+        return;
       }
-    } catch (error) {
-      oddsContainer.innerHTML = "Erro ao buscar odds.";
-      logToPage(`ERRO DETALHADO: ${error.message}`);
+
+      const cardDoJogo = botao.closest(".jogo-card");
+      const oddsContainer = cardDoJogo.querySelector(".odds-container");
+      logToPage("INFO: Container para as odds encontrado.");
+      
+      oddsContainer.style.display = "block";
+      oddsContainer.innerHTML = "Buscando odds...";
+      
+      try {
+        const url = `/api/dados-esportes?endpoint=odds&fixtureId=${fixtureId}`;
+        logToPage(`INFO: Fazendo chamada para a API em: ${url}`);
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.response && data.response.length > 0 && data.response[0].bookmakers.length > 0) {
+          const bookmaker = data.response[0].bookmakers[0];
+          const oddsVitoriaCasa = bookmaker.bets[0].values.find(v => v.value === "Home")?.odd || 'N/A';
+          const oddsEmpate = bookmaker.bets[0].values.find(v => v.value === "Draw")?.odd || 'N/A';
+          const oddsVitoriaFora = bookmaker.bets[0].values.find(v => v.value === "Away")?.odd || 'N/A';
+
+          oddsContainer.innerHTML = `
+            <strong>${bookmaker.name}:</strong> 
+            Casa: ${oddsVitoriaCasa} | 
+            Empate: ${oddsEmpate} | 
+            Fora: ${oddsVitoriaFora}
+          `;
+          logToPage("SUCESSO: Odds exibidas na página.");
+        } else {
+          oddsContainer.innerHTML = "Odds não disponíveis para este jogo.";
+          logToPage("AVISO: A API não retornou odds para este jogo.");
+        }
+      } catch (error) {
+        oddsContainer.innerHTML = "Erro ao buscar odds.";
+        logToPage(`ERRO DETALHADO: ${error.message}`);
+      }
     }
-  }
+  });
+  // --- FIM DO OUVINTE DE EVENTOS ---
+
+  // --- 5. INICIA TUDO ---
+  carregarJogosDoDia();
+
 });
+// --- FIM DO CÓDIGO ---
