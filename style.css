@@ -51,3 +51,21 @@
   padding-top: 10px;
   border-top: 1px solid #eee;
 }
+/* style.css */
+
+#diagnostico-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background-color: #2b2b2b;
+  color: #f0f0f0;
+  border: 1px solid #444;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+#debug-console {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  white-space: pre-wrap; /* Garante que o texto quebre a linha */
+  word-wrap: break-word; /* Força a quebra de palavras longas */
+}
