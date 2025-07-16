@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const divStatus = document.getElementById('status-api');
+ const divStatus = document.getElementById('status-api'); // Corrigido para corresponder ao HTML
+
     const dropdownLigas = document.getElementById('dropdown-ligas');
     const jogosDestaqueContainer = document.getElementById('jogos-destaque');
 
